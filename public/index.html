@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Placement Assistant Dashboard</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- Chart.js CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="index.css">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="logo-icon">🚀</div>
+        <h2>Placement AI</h2>
+      </div>
+      <nav class="nav-menu">
+        <a href="#overview" class="nav-item active" id="nav-overview">
+          <span class="icon">📊</span> Overview
+        </a>
+        <a href="#jobs" class="nav-item" id="nav-jobs">
+          <span class="icon">💼</span> Jobs Catalog
+        </a>
+        <a href="#kanban" class="nav-item" id="nav-kanban">
+          <span class="icon">📋</span> Kanban Board
+        </a>
+        <a href="#analytics" class="nav-item" id="nav-analytics">
+          <span class="icon">📈</span> Analytics Charts
+        </a>
+        <a href="#resumes" class="nav-item" id="nav-resumes">
+          <span class="icon">📄</span> Resumes Matcher
+        </a>
+        <a href="#calendar" class="nav-item" id="nav-calendar">
+          <span class="icon">📅</span> Calendar Sync
+        </a>
+        <a href="#notifications" class="nav-item" id="nav-notifications">
+          <span class="icon">🔔</span> Alerts Queue
+        </a>
+        <a href="#settings" class="nav-item" id="nav-settings">
+          <span class="icon">⚙️</span> Settings
+        </a>
+      </nav>
+      <div class="sidebar-footer">
+        <div class="user-badge">
+          <div class="user-avatar">👤</div>
+          <div class="user-info">
+            <h4 id="badge-username">Candidate</h4>
+            <p>Active Profile</p>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+      <!-- Top header bar -->
+      <header class="top-header">
+        <div class="header-title">
+          <h1 id="page-title">Dashboard Overview</h1>
+          <p id="page-subtitle">Track placement pipeline performance analytics.</p>
+        </div>
+        <div class="header-actions">
+          <button class="btn btn-secondary" id="btn-sync-all">🔄 Sync Ingestion</button>
+          <div class="export-dropdown">
+            <button class="btn btn-primary" id="btn-export-data">📤 Export Data</button>
+            <div class="dropdown-content">
+              <a href="#" id="export-csv">As CSV</a>
+              <a href="#" id="export-json">As JSON</a>
+              <a href="#" id="export-pdf">As PDF / Print</a>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Panel: Overview -->
+      <section id="panel-overview" class="view-panel active">
+        <!-- Overview Stats Grid -->
+        <div class="stats-grid">
+          <div class="card stat-card">
+            <div class="card-body">
+              <span class="stat-icon">💼</span>
+              <div class="stat-details">
+                <p class="stat-label">Total Discovered Jobs</p>
+                <h3 id="stat-total-jobs">0</h3>
+              </div>
+            </div>
+          </div>
+          <div class="card stat-card">
+            <div class="card-body">
+              <span class="stat-icon match">🎯</span>
+              <div class="stat-details">
+                <p class="stat-label">Recommended (>= 75)</p>
+                <h3 id="stat-recommended-jobs">0</h3>
+              </div>
+            </div>
+          </div>
+          <div class="card stat-card">
+            <div class="card-body">
+              <span class="stat-icon apps">📝</span>
+              <div class="stat-details">
+                <p class="stat-label">Submitted Applications</p>
+                <h3 id="stat-applications">0</h3>
+              </div>
+            </div>
+          </div>
+          <div class="card stat-card">
+            <div class="card-body">
+              <span class="stat-icon interview">📅</span>
+              <div class="stat-details">
+                <p class="stat-label">Scheduled Interviews</p>
+                <h3 id="stat-interviews">0</h3>
+              </div>
+            </div>
+          </div>
+          <div class="card stat-card">
+            <div class="card-body">
+              <span class="stat-icon offer">🏆</span>
+              <div class="stat-details">
+                <p class="stat-label">Offers Received</p>
+                <h3 id="stat-offers">0</h3>
+              </div>
+            </div>
+          </div>
+          <div class="card stat-card">
+            <div class="card-body">
+              <span class="stat-icon reject">❌</span>
+              <div class="stat-details">
+                <p class="stat-label">Applications Rejected</p>
+                <h3 id="stat-rejections">0</h3>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Middle Info Grid -->
+        <div class="info-grid">
+          <div class="card info-card">
+            <div class="card-header">
+              <h3>Latest Recommended Jobs</h3>
+              <a href="#jobs" class="view-all-link">Browse Catalog</a>
+            </div>
+            <div class="card-body">
+              <div class="table-container">
+                <table class="data-table" id="table-overview-jobs">
+                  <thead>
+                    <tr>
+                      <th>Company</th>
+                      <th>Role</th>
+                      <th>Platform</th>
+                      <th>AI Score</th>
+                      <th>Action</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr><td colspan="5" class="placeholder-row">Loading catalog...</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <div class="card info-card">
+            <div class="card-header">
+              <h3>Upcoming Calendar Schedules</h3>
+              <a href="#calendar" class="view-all-link">Open Calendar</a>
+            </div>
+            <div class="card-body">
+              <div class="calendar-mini-list" id="calendar-mini-list">
+                <div class="placeholder-row">Loading schedules...</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Lower Summary Row -->
+        <div class="info-grid triple">
+          <div class="card info-card">
+            <div class="card-header">
+              <h3>Resume Intelligence</h3>
+            </div>
+            <div class="card-body summary-small" id="overview-resume-stats">
+              <p>Loading resume details...</p>
+            </div>
+          </div>
+          <div class="card info-card">
+            <div class="card-header">
+              <h3>Gmail Synchronization</h3>
+            </div>
+            <div class="card-body summary-small" id="overview-gmail-stats">
+              <p>Loading sync state...</p>
+            </div>
+          </div>
+          <div class="card info-card">
+            <div class="card-header">
+              <h3>Notification Dispatcher</h3>
+            </div>
+            <div class="card-body summary-small" id="overview-notification-stats">
+              <p>Loading alerts state...</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Panel: Jobs Catalog -->
+      <section id="panel-jobs" class="view-panel">
+        <div class="card filter-card">
+          <div class="filter-grid">
+            <div class="filter-item">
+              <label for="filter-search">Search Keyword</label>
+              <input type="text" id="filter-search" placeholder="Company, role, skills...">
+            </div>
+            <div class="filter-item">
+              <label for="filter-platform">Ingestion Platform</label>
+              <select id="filter-platform">
+                <option value="all">All Platforms</option>
+                <option value="Unstop">Unstop</option>
+                <option value="Internshala">Internshala</option>
+                <option value="Wellfound">Wellfound</option>
+                <option value="Foundit">Foundit</option>
+                <option value="Naukri">Naukri</option>
+              </select>
+            </div>
+            <div class="filter-item">
+              <label for="filter-score">Minimum AI Score</label>
+              <select id="filter-score">
+                <option value="0">All Match Scores</option>
+                <option value="60">>= 60</option>
+                <option value="75">>= 75 (Default)</option>
+                <option value="85">>= 85</option>
+              </select>
+            </div>
+            <div class="filter-item">
+              <label for="sort-by">Sort Results By</label>
+              <select id="sort-by">
+                <option value="score">Highest AI Score</option>
+                <option value="date">Most Recently Discovered</option>
+                <option value="deadline">Approaching Deadline</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-body">
+            <div class="table-container">
+              <table class="data-table" id="table-catalog-jobs">
+                <thead>
+                  <tr>
+                    <th>Company</th>
+                    <th>Role</th>
+                    <th>Platform</th>
+                    <th>Location</th>
+                    <th>AI Score</th>
+                    <th>Salary</th>
+                    <th>Deadline</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr><td colspan="8" class="placeholder-row">Loading catalog jobs...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Panel: Kanban Tracker -->
+      <section id="panel-kanban" class="view-panel">
+        <div class="kanban-board">
+          <!-- Column: Discovered -->
+          <div class="kanban-column" id="col-discovered" ondragover="allowDrop(event)" ondrop="handleDrop(event, 'Discovered')">
+            <div class="column-header">
+              <span class="dot yellow"></span>
+              <h4>Discovered</h4>
+              <span class="count" id="count-discovered">0</span>
+            </div>
+            <div class="kanban-cards-container" id="cards-discovered"></div>
+          </div>
+
+          <!-- Column: Interested -->
+          <div class="kanban-column" id="col-interested" ondragover="allowDrop(event)" ondrop="handleDrop(event, 'Interested')">
+            <div class="column-header">
+              <span class="dot orange"></span>
+              <h4>Interested</h4>
+              <span class="count" id="count-interested">0</span>
+            </div>
+            <div class="kanban-cards-container" id="cards-interested"></div>
+          </div>
+
+          <!-- Column: Applied -->
+          <div class="kanban-column" id="col-applied" ondragover="allowDrop(event)" ondrop="handleDrop(event, 'Applied')">
+            <div class="column-header">
+              <span class="dot blue"></span>
+              <h4>Applied</h4>
+              <span class="count" id="count-applied">0</span>
+            </div>
+            <div class="kanban-cards-container" id="cards-applied"></div>
+          </div>
+
+          <!-- Column: Assessment -->
+          <div class="kanban-column" id="col-assessment" ondragover="allowDrop(event)" ondrop="handleDrop(event, 'Assessment Scheduled')">
+            <div class="column-header">
+              <span class="dot purple"></span>
+              <h4>Assessment</h4>
+              <span class="count" id="count-assessment">0</span>
+            </div>
+            <div class="kanban-cards-container" id="cards-assessment"></div>
+          </div>
+
+          <!-- Column: Interview -->
+          <div class="kanban-column" id="col-interview" ondragover="allowDrop(event)" ondrop="handleDrop(event, 'Interview Scheduled')">
+            <div class="column-header">
+              <span class="dot cyan"></span>
+              <h4>Interview</h4>
+              <span class="count" id="count-interview">0</span>
+            </div>
+            <div class="kanban-cards-container" id="cards-interview"></div>
+          </div>
+
+          <!-- Column: Offer -->
+          <div class="kanban-column" id="col-offer" ondragover="allowDrop(event)" ondrop="handleDrop(event, 'Offer Received')">
+            <div class="column-header">
+              <span class="dot green"></span>
+              <h4>Offer</h4>
+              <span class="count" id="count-offer">0</span>
+            </div>
+            <div class="kanban-cards-container" id="cards-offer"></div>
+          </div>
+
+          <!-- Column: Rejected -->
+          <div class="kanban-column" id="col-rejected" ondragover="allowDrop(event)" ondrop="handleDrop(event, 'Rejected')">
+            <div class="column-header">
+              <span class="dot red"></span>
+              <h4>Rejected</h4>
+              <span class="count" id="count-rejected">0</span>
+            </div>
+            <div class="kanban-cards-container" id="cards-rejected"></div>
+          </div>
+
+          <!-- Column: Expired -->
+          <div class="kanban-column" id="col-expired" ondragover="allowDrop(event)" ondrop="handleDrop(event, 'Expired')">
+            <div class="column-header">
+              <span class="dot gray"></span>
+              <h4>Expired</h4>
+              <span class="count" id="count-expired">0</span>
+            </div>
+            <div class="kanban-cards-container" id="cards-expired"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Panel: Analytics Charts -->
+      <section id="panel-analytics" class="view-panel">
+        <div class="charts-grid">
+          <!-- Chart Card: Jobs & Apps over time -->
+          <div class="card chart-card">
+            <div class="card-header">
+              <h3>Ingestions & Applications Pipeline</h3>
+            </div>
+            <div class="card-body">
+              <div class="chart-container">
+                <canvas id="chart-trends"></canvas>
+              </div>
+            </div>
+          </div>
+
+          <!-- Chart Card: Platform distribution -->
+          <div class="card chart-card">
+            <div class="card-header">
+              <h3>Platform Distribution</h3>
+            </div>
+            <div class="card-body">
+              <div class="chart-container">
+                <canvas id="chart-platforms"></canvas>
+              </div>
+            </div>
+          </div>
+
+          <!-- Chart Card: Company distribution -->
+          <div class="card chart-card">
+            <div class="card-header">
+              <h3>Company Target Engagement</h3>
+            </div>
+            <div class="card-body">
+              <div class="chart-container">
+                <canvas id="chart-companies"></canvas>
+              </div>
+            </div>
+          </div>
+
+          <!-- Chart Card: Resume Usage -->
+          <div class="card chart-card">
+            <div class="card-header">
+              <h3>Resume Usage Profile Distribution</h3>
+            </div>
+            <div class="card-body">
+              <div class="chart-container">
+                <canvas id="chart-resumes"></canvas>
+              </div>
+            </div>
+          </div>
+
+          <!-- Chart Card: AI Score distribution -->
+          <div class="card chart-card">
+            <div class="card-header">
+              <h3>AI Scores Match Density</h3>
+            </div>
+            <div class="card-body">
+              <div class="chart-container">
+                <canvas id="chart-scores"></canvas>
+              </div>
+            </div>
+          </div>
+
+          <!-- Chart Card: Conversion Rates -->
+          <div class="card chart-card">
+            <div class="card-header">
+              <h3>Recruitment Stage Funnel Conversion</h3>
+            </div>
+            <div class="card-body">
+              <div class="chart-container">
+                <canvas id="chart-conversion"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Panel: Resumes Matcher -->
+      <section id="panel-resumes" class="view-panel">
+        <div class="resume-workspace">
+          <div class="resume-list-pane">
+            <div class="card">
+              <div class="card-header">
+                <h3>Resume Profiles</h3>
+                <button class="btn btn-secondary btn-sm" id="btn-upload-resume-modal">➕ Upload New</button>
+              </div>
+              <div class="card-body">
+                <div class="resume-list" id="resumes-list-container">
+                  <div class="placeholder-row">Loading resumes...</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="resume-details-pane">
+            <div class="card" id="card-resume-details" style="display: none;">
+              <div class="card-header header-complex">
+                <div>
+                  <h3 id="resume-details-name">General Resume</h3>
+                  <p id="resume-details-role">Backend Developer</p>
+                </div>
+                <div class="header-meta-actions">
+                  <span class="badge" id="resume-details-version">v1</span>
+                  <select id="resume-details-version-select" class="form-select select-sm">
+                    <option value="1">Version 1</option>
+                  </select>
+                  <button class="btn btn-secondary btn-sm" id="btn-rollback-resume">Rollback</button>
+                </div>
+              </div>
+              <div class="card-body">
+                <div class="tabs-sub">
+                  <button class="tab-sub-btn active" onclick="switchSubTab(event, 'subtab-skills')">Skills & Keyword Match</button>
+                  <button class="tab-sub-btn" onclick="switchSubTab(event, 'subtab-recommendations')">Jobs Recommender</button>
+                  <button class="tab-sub-btn" onclick="switchSubTab(event, 'subtab-optimizer')">AI Optimizer Suggestions</button>
+                </div>
+
+                <div id="subtab-skills" class="subtab-panel active">
+                  <div class="skills-split">
+                    <div>
+                      <h4>Primary Tech Skills</h4>
+                      <div class="tag-container" id="resume-skills-primary"></div>
+                    </div>
+                    <div>
+                      <h4>Secondary Keywords</h4>
+                      <div class="tag-container" id="resume-skills-secondary"></div>
+                    </div>
+                  </div>
+                </div>
+
+                <div id="subtab-recommendations" class="subtab-panel">
+                  <div class="table-container">
+                    <table class="data-table" id="table-resume-recommendations">
+                      <thead>
+                        <tr>
+                          <th>Company</th>
+                          <th>Role</th>
+                          <th>Match Score</th>
+                          <th>Status</th>
+                          <th>Action</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr><td colspan="5" class="placeholder-row">Select a resume to evaluate recommendations...</td></tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+
+                <div id="subtab-optimizer" class="subtab-panel">
+                  <div class="optimizer-layout">
+                    <div class="optimizer-metric">
+                      <div class="circle-progress">
+                        <svg viewBox="0 0 36 36" class="circular-chart">
+                          <path class="circle-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                          <path class="circle" id="optimizer-score-circle" stroke-dasharray="0, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                        </svg>
+                        <div class="percentage" id="optimizer-score-text">0%</div>
+                      </div>
+                      <p>AI Density Scoring Score</p>
+                    </div>
+                    <div class="optimizer-details">
+                      <h4>Missing Keywords Recommendations</h4>
+                      <ul id="optimizer-missing-list"></ul>
+                      <h4>Repeated Keywords Density Warnings</h4>
+                      <ul id="optimizer-repeated-list"></ul>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="card" id="card-resume-none">
+              <div class="card-body placeholder-card">
+                <p>Select a resume profile from the left list, or upload a new template profile to activate match analysis.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Panel: Calendar Sync -->
+      <section id="panel-calendar" class="view-panel">
+        <div class="calendar-workspace">
+          <div class="calendar-view-pane">
+            <div class="card">
+              <div class="card-header">
+                <h3 id="calendar-month-year">July 2026</h3>
+                <div class="calendar-navigation">
+                  <button class="btn btn-secondary btn-sm" id="btn-prev-month">◀</button>
+                  <button class="btn btn-secondary btn-sm" id="btn-next-month">▶</button>
+                </div>
+              </div>
+              <div class="card-body">
+                <div class="calendar-grid-header">
+                  <div>Sun</div><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div>
+                </div>
+                <div class="calendar-grid-cells" id="calendar-days-container"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="calendar-info-pane">
+            <div class="card">
+              <div class="card-header">
+                <h3>Calendar Event Schedules</h3>
+              </div>
+              <div class="card-body">
+                <div class="calendar-events-list" id="calendar-events-list">
+                  <div class="placeholder-row">Loading schedule events...</div>
+                </div>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-header">
+                <h3>Upcoming Reminder Alarms</h3>
+              </div>
+              <div class="card-body">
+                <div class="calendar-reminders-list" id="calendar-reminders-list">
+                  <div class="placeholder-row">Loading scheduled reminder alarms...</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Panel: Notification Alerts History -->
+      <section id="panel-notifications" class="view-panel">
+        <div class="card">
+          <div class="card-header header-complex">
+            <h3>Notification Dispatch History</h3>
+            <div class="queue-stats" id="queue-stats-container">
+              Loading queue summary...
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="table-container">
+              <table class="data-table" id="table-notification-history">
+                <thead>
+                  <tr>
+                    <th>Job ID</th>
+                    <th>Role</th>
+                    <th>Channel</th>
+                    <th>Sent At</th>
+                    <th>Retry Count</th>
+                    <th>Status</th>
+                    <th>Raw Response</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr><td colspan="7" class="placeholder-row">Loading notification logs history...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Panel: Settings Config -->
+      <section id="panel-settings" class="view-panel">
+        <div class="settings-workspace">
+          <div class="card settings-card">
+            <div class="card-header">
+              <h3>User Preference Profile</h3>
+            </div>
+            <div class="card-body">
+              <form id="form-user-profile">
+                <div class="form-group">
+                  <label for="profile-name">Candidate Name</label>
+                  <input type="text" id="profile-name" required>
+                </div>
+                <div class="form-group">
+                  <label for="profile-roles">Target Roles (comma separated)</label>
+                  <input type="text" id="profile-roles" placeholder="Software Engineer, Backend Developer" required>
+                </div>
+                <div class="form-group">
+                  <label for="profile-skills">Core Technical Skills (comma separated)</label>
+                  <input type="text" id="profile-skills" placeholder="JavaScript, Node.js, Python, PostgreSQL" required>
+                </div>
+                <div class="form-group">
+                  <label for="profile-locations">Preferred Job Locations (comma separated)</label>
+                  <input type="text" id="profile-locations" placeholder="Remote, Bangalore, Mumbai" required>
+                </div>
+                <div class="form-group">
+                  <label for="profile-salary">Minimum Expected Salary</label>
+                  <input type="text" id="profile-salary" placeholder="12 LPA" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Update Profile</button>
+              </form>
+            </div>
+          </div>
+
+          <div class="card settings-card">
+            <div class="card-header">
+              <h3>Application Dispatcher Settings</h3>
+            </div>
+            <div class="card-body">
+              <form id="form-app-settings">
+                <div class="form-group">
+                  <label for="settings-threshold">Minimum Notification Score Threshold</label>
+                  <input type="number" id="settings-threshold" min="0" max="100" required>
+                </div>
+                <div class="form-group-checkbox">
+                  <input type="checkbox" id="settings-telegram-enabled">
+                  <label for="settings-telegram-enabled">Enable Instant Telegram Alerts</label>
+                </div>
+                <div class="form-group-checkbox">
+                  <input type="checkbox" id="settings-calendar-enabled">
+                  <label for="settings-calendar-enabled">Enable Google Calendar Event Sync</label>
+                </div>
+                <div class="form-group-checkbox">
+                  <input type="checkbox" id="settings-gmail-enabled">
+                  <label for="settings-gmail-enabled">Enable Gmail Sync Ingestion</label>
+                </div>
+                <div class="form-group">
+                  <label for="settings-digest">Digest Mode Dispatch Interval</label>
+                  <select id="settings-digest">
+                    <option value="instant">Instant Realtime Alerts</option>
+                    <option value="daily">Daily Combined Digest</option>
+                    <option value="weekly">Weekly Summary Digest</option>
+                  </select>
+                </div>
+                <button type="submit" class="btn btn-primary">Save Settings</button>
+              </form>
+            </div>
+          </div>
+
+          <div class="card settings-card">
+            <div class="card-header">
+              <h3>Google Integrations & Syncing OAuth</h3>
+            </div>
+            <div class="card-body">
+              <div class="oauth-status-panel">
+                <div class="oauth-badge" id="google-auth-status">Checking status...</div>
+                <button class="btn btn-primary" id="btn-google-login">Authorize Google APIs</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Modal: Upload Resume -->
+  <div class="modal" id="modal-upload-resume" style="display: none;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Upload Resume File</h3>
+        <button class="btn-close" id="btn-close-resume-modal">×</button>
+      </div>
+      <div class="modal-body">
+        <form id="form-upload-resume">
+          <div class="form-group">
+            <label for="resume-name-input">Profile Name</label>
+            <input type="text" id="resume-name-input" placeholder="e.g. Java Backend Resume" required>
+          </div>
+          <div class="form-group">
+            <label for="resume-file-input">Select Document File (PDF or DOCX)</label>
+            <input type="file" id="resume-file-input" accept=".pdf,.docx" required>
+          </div>
+          <button type="submit" class="btn btn-primary">Parse and Register Profile</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Update ATS stage metadata (Date/Link) -->
+  <div class="modal" id="modal-ats-meta" style="display: none;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Update Calendar Dates & Info</h3>
+        <button class="btn-close" id="btn-close-ats-modal">×</button>
+      </div>
+      <div class="modal-body">
+        <form id="form-ats-meta">
+          <input type="hidden" id="ats-meta-id">
+          <input type="hidden" id="ats-meta-status">
+          <div class="form-group" id="group-recruiter-name">
+            <label for="ats-recruiter-name">Recruiter Name</label>
+            <input type="text" id="ats-recruiter-name">
+          </div>
+          <div class="form-group" id="group-recruiter-email">
+            <label for="ats-recruiter-email">Recruiter Email</label>
+            <input type="email" id="ats-recruiter-email">
+          </div>
+          <div class="form-group" id="group-recruiter-phone">
+            <label for="ats-recruiter-phone">Recruiter Phone</label>
+            <input type="text" id="ats-recruiter-phone">
+          </div>
+          <div class="form-group" id="group-meeting-link">
+            <label for="ats-meeting-link">Meeting Interview Link</label>
+            <input type="url" id="ats-meeting-link">
+          </div>
+          <div class="form-group" id="group-interview-date">
+            <label for="ats-interview-date">Interview Date</label>
+            <input type="date" id="ats-interview-date">
+          </div>
+          <div class="form-group" id="group-interview-time">
+            <label for="ats-interview-time">Interview Start Time</label>
+            <input type="time" id="ats-interview-time">
+          </div>
+          <div class="form-group" id="group-assessment-date">
+            <label for="ats-assessment-date">Assessment Date & Time</label>
+            <input type="datetime-local" id="ats-assessment-date">
+          </div>
+          <div class="form-group" id="group-offer-deadline">
+            <label for="ats-offer-deadline">Offer Response Deadline</label>
+            <input type="date" id="ats-offer-deadline">
+          </div>
+          <div class="form-group" id="group-salary-offered">
+            <label for="ats-salary-offered">Salary Offered</label>
+            <input type="number" id="ats-salary-offered" placeholder="e.g. 1500000">
+          </div>
+          <div class="form-group">
+            <label for="ats-notes">Tracking Notes</label>
+            <textarea id="ats-notes" rows="3"></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary">Update Transition State</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script src="index.js"></script>
+</body>
+</html>

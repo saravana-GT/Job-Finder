@@ -1,0 +1,50 @@
+version: '3.8'
+
+services:
+  # Database storage engine service
+  database:
+    image: postgres:15-alpine
+    container_name: placement-db
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: production_db_secret_pass
+      POSTGRES_DB: placement_assistant
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d placement_assistant"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Node application service
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: placement-app
+    restart: always
+    depends_on:
+      database:
+        condition: service_healthy
+    ports:
+      - "3000:3000"
+    environment:
+      PORT: 3000
+      NODE_ENV: production
+      DATABASE_URL: postgres://postgres:production_db_secret_pass@database:5432/placement_assistant
+      TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN}
+      TELEGRAM_CHAT_ID: ${TELEGRAM_CHAT_ID}
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
+      GOOGLE_REDIRECT_URI: ${GOOGLE_REDIRECT_URI}
+      LOG_LEVEL: info
+    volumes:
+      - ./logs:/app/logs
+
+volumes:
+  pgdata:
+    driver: local
