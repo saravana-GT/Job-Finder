@@ -15,8 +15,6 @@ COPY --from=builder /app/node_modules ./node_modules
 COPY package*.json ./
 COPY src ./src
 COPY public ./public
-COPY config ./config
-COPY migrations ./migrations
 
 EXPOSE 3000
 CMD ["node", "src/app.js"]
