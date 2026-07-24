@@ -41,13 +41,50 @@ export function initTelegramBot() {
       logger.info(`Telegram message received: "${text}" from Chat ID: ${chatId}`, { module: 'telegram' });
 
       try {
-        const responseText = await handleCommand(text, chatId);
-        const isHtml = responseText.includes('href=') || responseText.includes('<b>') || responseText.includes('</a>');
-        const parseMode = isHtml ? 'HTML' : 'Markdown';
-        await bot.sendMessage(chatId, responseText, { parse_mode: parseMode });
+        const response = await handleCommand(text, chatId);
+        if (Array.isArray(response)) {
+          for (const item of response) {
+            await bot.sendMessage(chatId, item.text, {
+              parse_mode: 'HTML',
+              reply_markup: item.reply_markup
+            });
+          }
+        } else {
+          const isHtml = response.includes('href=') || response.includes('<b>') || response.includes('</a>');
+          const parseMode = isHtml ? 'HTML' : 'Markdown';
+          await bot.sendMessage(chatId, response, { parse_mode: parseMode });
+        }
       } catch (err) {
         logger.error(`Failed to handle telegram command "${text}"`, { module: 'telegram', error: err });
         await bot.sendMessage(chatId, '⚠️ *An error occurred while processing your command.*', { parse_mode: 'Markdown' });
+      }
+    });
+
+    bot.on('callback_query', async (callbackQuery) => {
+      const { data, message } = callbackQuery;
+      const chatId = message.chat.id;
+      const messageId = message.message_id;
+
+      if (data.startsWith('reject_')) {
+        const jobId = data.split('_')[1];
+        try {
+          const { query } = await import('../database/connection.js');
+          const res = await query("UPDATE jobs SET status = 'inactive' WHERE id = $1 RETURNING company, role", [jobId]);
+          if (res.rows.length > 0) {
+            const job = res.rows[0];
+            await bot.answerCallbackQuery(callbackQuery.id, { text: 'Job rejected!' });
+            await bot.editMessageText(`❌ <b>Rejected: ${job.role} at ${job.company}</b>`, {
+              chat_id: chatId,
+              message_id: messageId,
+              parse_mode: 'HTML'
+            });
+          } else {
+            await bot.answerCallbackQuery(callbackQuery.id, { text: 'Job not found.' });
+          }
+        } catch (err) {
+          logger.error('Failed to handle reject callback', { module: 'telegram', error: err });
+          await bot.answerCallbackQuery(callbackQuery.id, { text: 'Error rejecting job.' });
+        }
       }
     });
 

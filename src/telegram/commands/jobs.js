@@ -8,15 +8,23 @@ export async function jobsCommand() {
     return '❌ <b>No jobs found in the database.</b>';
   }
 
-  let message = '🚀 <b>AI Placement Assistant - Latest Jobs</b>\n\n';
-  for (const job of jobs) {
-    message += `🏢 <b>Company:</b> ${job.company}\n`;
-    message += `💼 <b>Role:</b> ${job.role}\n`;
-    message += `🌐 <b>Platform:</b> ${job.platform || 'N/A'}\n`;
-    message += `📍 <b>Location:</b> ${job.location || 'N/A'}\n`;
-    message += `⭐ <b>AI Score:</b> ${job.ai_score !== null ? `${job.ai_score}%` : 'N/A'}\n`;
-    message += `🔗 <b>Apply Link:</b> <a href="${job.apply_url || '#'}">Click Here</a>\n`;
-    message += `───────────────────\n`;
-  }
-  return message;
+  return jobs.map(job => {
+    const text = `🏢 <b>Company:</b> ${job.company}\n` +
+                 `💼 <b>Role:</b> ${job.role}\n` +
+                 `🌐 <b>Platform:</b> ${job.platform || 'N/A'}\n` +
+                 `📍 <b>Location:</b> ${job.location || 'N/A'}\n` +
+                 `⭐ <b>AI Score:</b> ${job.ai_score !== null ? `${job.ai_score}%` : 'N/A'}`;
+
+    return {
+      text,
+      reply_markup: {
+        inline_keyboard: [
+          [
+            { text: '🔗 Apply', url: job.apply_url || '#' },
+            { text: '❌ Reject', callback_data: `reject_${job.id}` }
+          ]
+        ]
+      }
+    };
+  });
 }
