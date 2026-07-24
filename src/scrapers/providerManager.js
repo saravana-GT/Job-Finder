@@ -133,14 +133,14 @@ class ProviderManager {
         syncResult.jobs_fetched = rawData.length;
         
         // Parse
-        const parsed = await provider.parseJobs(rawData);
+        const parsed = await provider.parse(rawData);
         syncResult.jobs_parsed = parsed.length;
 
         // Normalize
-        const normalized = await provider.normalizeJobs(parsed);
+        const normalized = await provider.normalize(parsed);
 
         // Validate
-        const validated = await provider.validateJobs(normalized);
+        const validated = await provider.validate(normalized);
         syncResult.jobs_skipped = normalized.length - validated.length;
 
         // Save
