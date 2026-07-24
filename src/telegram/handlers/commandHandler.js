@@ -8,6 +8,7 @@ import { settingsCommand } from '../commands/settings.js';
 import { thresholdCommand } from '../commands/threshold.js';
 import { todayCommand } from '../commands/today.js';
 import { recommendedCommand } from '../commands/recommended.js';
+import { rejectCommand } from '../commands/reject.js';
 import { logger } from '../../utils/logger.js';
 
 export async function handleCommand(command, chatId) {
@@ -37,6 +38,8 @@ export async function handleCommand(command, chatId) {
         return todayCommand();
       case '/recommended':
         return recommendedCommand();
+      case '/reject':
+        return rejectCommand(command);
       default:
         return `❌ *Unknown command: ${command}*\n\nType /help to see all available commands.`;
     }

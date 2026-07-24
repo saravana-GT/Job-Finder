@@ -10,7 +10,8 @@ export function helpCommand() {
   message += '• /settings - Show current AI matching and notification settings\n';
   message += '• /threshold <score> - Set minimum AI match score requirement\n';
   message += '• /today - View jobs discovered today sorted by AI score\n';
-  message += '• /recommended - View top 10 recommended matches (>= 75% score)\n\n';
+  message += '• /recommended - View top 10 recommended matches (>= 75% score)\n';
+  message += '• /reject <company_name> - Reject and ignore jobs from a specific company (e.g. /reject Amazon)\n\n';
   message += '_All notifications and sync runs are automated via background schedulers._';
   return message;
 }
