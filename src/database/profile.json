@@ -1,49 +1,36 @@
 {
   "skills": [
     "Java",
-    "Spring Boot",
-    "SQL",
-    "MySQL",
-    "JavaScript",
-    "HTML",
-    "CSS",
-    "Git",
-    "GitHub",
-    "REST APIs",
-    "Node.js",
-    "Problem Solving",
+    "C",
     "DSA",
+    "SQL",
+    "Problem Solving",
     "OOP"
   ],
   "programming_languages": [
     "Java",
-    "JavaScript",
+    "C",
     "SQL"
   ],
-  "frameworks": [
-    "Spring Boot",
-    "Node.js"
-  ],
+  "frameworks": [],
   "databases": [
-    "MySQL"
+    "MySQL",
+    "PostgreSQL"
   ],
   "tools": [
     "Git",
-    "GitHub",
-    "REST APIs"
+    "GitHub"
   ],
   "preferred_roles": [
-    "Software Engineer",
     "Backend Developer",
-    "Full Stack Developer"
+    "Software Engineer"
   ],
   "preferred_locations": [
     "Remote",
-    "Bangalore",
-    "Hybrid"
+    "Bangalore"
   ],
-  "expected_salary": "12 LPA",
+  "expected_salary": "6 LPA",
   "preferred_employment_type": "Full Time",
-  "years_of_experience": 3,
-  "education": "Bachelor of Engineering / Technology in Computer Science"
+  "years_of_experience": 0,
+  "education": "Bachelor of Computer Science / Engineering"
 }
