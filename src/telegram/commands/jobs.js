@@ -5,17 +5,17 @@ export async function jobsCommand() {
   const jobs = await jobRepo.listJobs(10);
 
   if (jobs.length === 0) {
-    return '❌ *No jobs found in the database.*';
+    return '❌ <b>No jobs found in the database.</b>';
   }
 
-  let message = '🚀 *AI Placement Assistant - Latest Jobs*\n\n';
+  let message = '🚀 <b>AI Placement Assistant - Latest Jobs</b>\n\n';
   for (const job of jobs) {
-    message += `🏢 *Company:* ${job.company}\n`;
-    message += `💼 *Role:* ${job.role}\n`;
-    message += `🌐 *Platform:* ${job.platform || 'N/A'}\n`;
-    message += `📍 *Location:* ${job.location || 'N/A'}\n`;
-    message += `⭐ *AI Score:* ${job.ai_score || 'N/A'}\n`;
-    message += `🔗 *Apply Link:* [Click Here](${job.apply_url || '#'}) \n`;
+    message += `🏢 <b>Company:</b> ${job.company}\n`;
+    message += `💼 <b>Role:</b> ${job.role}\n`;
+    message += `🌐 <b>Platform:</b> ${job.platform || 'N/A'}\n`;
+    message += `📍 <b>Location:</b> ${job.location || 'N/A'}\n`;
+    message += `⭐ <b>AI Score:</b> ${job.ai_score !== null ? `${job.ai_score}%` : 'N/A'}\n`;
+    message += `🔗 <b>Apply Link:</b> <a href="${job.apply_url || '#'}">Click Here</a>\n`;
     message += `───────────────────\n`;
   }
   return message;

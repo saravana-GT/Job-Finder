@@ -42,7 +42,9 @@ export function initTelegramBot() {
 
       try {
         const responseText = await handleCommand(text, chatId);
-        await bot.sendMessage(chatId, responseText, { parse_mode: 'Markdown' });
+        const isHtml = responseText.includes('href=') || responseText.includes('<b>') || responseText.includes('</a>');
+        const parseMode = isHtml ? 'HTML' : 'Markdown';
+        await bot.sendMessage(chatId, responseText, { parse_mode: parseMode });
       } catch (err) {
         logger.error(`Failed to handle telegram command "${text}"`, { module: 'telegram', error: err });
         await bot.sendMessage(chatId, '⚠️ *An error occurred while processing your command.*', { parse_mode: 'Markdown' });

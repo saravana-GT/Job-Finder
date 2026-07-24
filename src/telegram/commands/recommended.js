@@ -7,17 +7,13 @@ export async function recommendedCommand() {
   const jobs = await jobRepository.listJobsByMinScore(75, 10);
 
   if (jobs.length === 0) {
-    return '🎯 *No recommended matches found yet.* Try adjusting your profile skills.';
+    return '🎯 <b>No recommended matches found yet.</b> Try adjusting your profile skills.';
   }
 
   const jobList = jobs.map((j, index) => {
-    return `${index + 1}. *${j.company}* - _${j.role}_ (*Score: ${j.ai_score}%*)\n   📍 ${j.location || 'Onsite'} | [Apply](${j.apply_url})`;
+    return `${index + 1}. <b>${j.company}</b> - <i>${j.role}</i> (<b>Score: ${j.ai_score}%</b>)\n   📍 ${j.location || 'Onsite'} | <a href="${j.apply_url}">Apply</a>`;
   }).join('\n\n');
 
-  return `
-🎯 *Top Recommended Matches:*
-
-${jobList}
-`;
+  return `🎯 <b>Top Recommended Matches:</b>\n\n${jobList}`;
 }
 export default recommendedCommand;

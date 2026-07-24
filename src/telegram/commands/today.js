@@ -12,18 +12,14 @@ export async function todayCommand() {
   const jobs = res.rows;
 
   if (jobs.length === 0) {
-    return '📅 *No new jobs ingested today yet.*';
+    return '📅 <b>No new jobs ingested today yet.</b>';
   }
 
   const jobList = jobs.map((j, index) => {
     const scoreText = j.ai_score !== null ? `(${j.ai_score}%)` : '';
-    return `${index + 1}. *${j.company}* - _${j.role}_ ${scoreText}\n   📍 ${j.location || 'Onsite'} | [Apply](${j.apply_url})`;
+    return `${index + 1}. <b>${j.company}</b> - <i>${j.role}</i> ${scoreText}\n   📍 ${j.location || 'Onsite'} | <a href="${j.apply_url}">Apply</a>`;
   }).join('\n\n');
 
-  return `
-📅 *Jobs Discovered Today:*
-
-${jobList}
-`;
+  return `📅 <b>Jobs Discovered Today:</b>\n\n${jobList}`;
 }
 export default todayCommand;
