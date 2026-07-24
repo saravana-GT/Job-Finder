@@ -113,7 +113,7 @@ if (process.argv[1] && process.argv[1].includes('app.js')) {
       (async () => {
         try {
           logger.info('Triggering initial background job sync on startup...', { module: 'app' });
-          await providerManager.runSync();
+          await providerManager.syncAllProviders();
           logger.info('Initial job sync completed. Recalculating AI match scores...', { module: 'app' });
           const { recommendationEngine } = await import('./services/recommendationEngine.js');
           const { profileService } = await import('./services/profileService.js');
