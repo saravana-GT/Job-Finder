@@ -71,13 +71,8 @@ export function initTelegramBot() {
           const { query } = await import('../database/connection.js');
           const res = await query("UPDATE jobs SET status = 'inactive' WHERE id = $1 RETURNING company, role", [jobId]);
           if (res.rows.length > 0) {
-            const job = res.rows[0];
-            await bot.answerCallbackQuery(callbackQuery.id, { text: 'Job rejected!' });
-            await bot.editMessageText(`❌ <b>Rejected: ${job.role} at ${job.company}</b>`, {
-              chat_id: chatId,
-              message_id: messageId,
-              parse_mode: 'HTML'
-            });
+            await bot.answerCallbackQuery(callbackQuery.id, { text: `Rejected: ${job.role} at ${job.company}` });
+            await bot.deleteMessage(chatId, messageId);
           } else {
             await bot.answerCallbackQuery(callbackQuery.id, { text: 'Job not found.' });
           }
