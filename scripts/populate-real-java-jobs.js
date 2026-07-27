@@ -82,6 +82,20 @@ async function populate() {
         apply_url: 'https://weworkremotely.com/remote-jobs/nuuly-senior-software-engineer-jvm-spring-kotlin',
         source_id: 'wwr-nuuly-jvm-spring',
         ai_score: 100
+      },
+      {
+        platform: 'WeWorkRemotely',
+        company: 'Inuka',
+        role: 'Junior Java Backend Developer (Microservices)',
+        location: 'Remote',
+        employment_type: 'Full Time',
+        salary: 'Competitive',
+        experience: 'Entry-Junior',
+        skills: ['Java', 'Spring Boot', 'SQL', 'OOP', 'Problem Solving'],
+        description: 'Develop backend microservices and API integrations for Inuka platform using Java and Spring Boot.',
+        apply_url: 'https://weworkremotely.com/remote-jobs/inuka-junior-java-backend-developer',
+        source_id: 'wwr-inuka-java-backend',
+        ai_score: 95
       }
     ];
 
