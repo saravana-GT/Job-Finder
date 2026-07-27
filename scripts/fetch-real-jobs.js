@@ -25,7 +25,7 @@ async function getProfile() {
     return JSON.parse(fs.readFileSync(profilePath, 'utf8'));
   }
   return {
-    skills: ["Java", "C", "DSA", "SQL", "Problem Solving", "OOP"],
+    skills: ["Java", "C", "DSA", "Prompt Engineering", "Spring", "Spring Boot", "SQL", "Problem Solving", "OOP"],
     preferred_roles: ["Software Engineer", "Backend Developer", "Full Stack Developer"]
   };
 }
@@ -47,29 +47,46 @@ function calculateMatchScore(job, profile) {
   };
 }
 
-async function fetchAndIngest() {
-  console.log('Connecting to Singapore database and fetching live English remote jobs...');
+async function fetchJobsByTag(tag) {
   try {
-    const res = await fetch('https://remoteok.com/api', {
+    const res = await fetch(`https://remoteok.com/api?tag=${tag}`, {
       headers: {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36'
       }
     });
 
     if (!res.ok) {
-      throw new Error(`Failed to fetch from RemoteOK: ${res.status}`);
+      console.error(`Failed to fetch tag ${tag}: ${res.status}`);
+      return [];
     }
 
     const json = await res.json();
-    // The first item in RemoteOK response is always a legal disclaimer, skip it
-    const rawJobs = json.slice(1);
-    console.log(`Fetched ${rawJobs.length} live English remote jobs. Processing...`);
+    return json.slice(1); // skip disclaimer
+  } catch (err) {
+    console.error(`Fetch error for tag ${tag}:`, err.message);
+    return [];
+  }
+}
+
+async function fetchAndIngest() {
+  console.log('Connecting to Singapore database and fetching live Java/Developer remote jobs...');
+  try {
+    // Fetch Java and Developer jobs in parallel
+    const [javaJobs, devJobs] = await Promise.all([
+      fetchJobsByTag('java'),
+      fetchJobsByTag('developer')
+    ]);
+
+    const rawJobs = [...javaJobs, ...devJobs];
+    console.log(`Fetched total ${rawJobs.length} raw jobs across tags. Processing...`);
 
     const profile = await getProfile();
     let savedCount = 0;
 
-    for (const raw of rawJobs.slice(0, 10)) {
-      const skills = raw.tags || ['software', 'developer'];
+    for (const raw of rawJobs) {
+      if (savedCount >= 10) break; // Limit to 10 matching jobs
+
+      const skills = raw.tags || ['developer'];
       const job = {
         platform: 'RemoteOK',
         company: (raw.company || 'Remote Company').slice(0, 99),
@@ -93,7 +110,17 @@ async function fetchAndIngest() {
 
       // Calculate AI score
       const match = calculateMatchScore(job, profile);
-      const aiScore = Math.max(50, match.totalScore); // Baseline 50% for relevance
+      // We want to verify it matches our Java, C, Spring, SQL, DSA, OOP skills
+      const hasDirectSkillMatch = skills.some(s => 
+        ['java', 'c', 'dsa', 'spring', 'sql', 'mysql', 'postgresql', 'oop'].includes(s.toLowerCase())
+      );
+      
+      const aiScore = hasDirectSkillMatch ? Math.min(100, 70 + match.totalScore) : Math.max(50, match.totalScore);
+
+      // Only save jobs with AI score >= 50%
+      if (aiScore < 50) {
+        continue;
+      }
 
       // Save
       await pool.query(`
@@ -115,10 +142,10 @@ async function fetchAndIngest() {
         aiScore
       ]);
       savedCount++;
-      console.log(`✓ Saved real English job: "${job.role}" at ${job.company} (AI Score: ${aiScore}%)`);
+      console.log(`✓ Saved matching English job: "${job.role}" at ${job.company} (AI Score: ${aiScore}%)`);
     }
 
-    console.log(`\nSuccess! Ingested ${savedCount} new English remote jobs.`);
+    console.log(`\nSuccess! Ingested ${savedCount} new matching English remote jobs.`);
     await pool.end();
   } catch (error) {
     console.error('Fetch and Ingest failed:', error.message);
