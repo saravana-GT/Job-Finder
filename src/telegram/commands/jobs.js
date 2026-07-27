@@ -2,10 +2,11 @@ import { JobRepository } from '../../repositories/jobRepository.js';
 
 export async function jobsCommand() {
   const jobRepo = new JobRepository();
-  const jobs = await jobRepo.listJobs(10);
+  // Filter and show only jobs with AI Match Score >= 50%
+  const jobs = await jobRepo.listJobsByMinScore(50, 10);
 
   if (jobs.length === 0) {
-    return '❌ <b>No jobs found in the database.</b>';
+    return '❌ <b>No matching jobs found in the database.</b> Try adjusting your profile skills or running a new sync.';
   }
 
   return jobs.map(job => {
