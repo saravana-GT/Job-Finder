@@ -3,6 +3,9 @@
     "Java",
     "C",
     "DSA",
+    "Prompt Engineering",
+    "Spring",
+    "Spring Boot",
     "SQL",
     "Problem Solving",
     "OOP"
@@ -12,7 +15,10 @@
     "C",
     "SQL"
   ],
-  "frameworks": [],
+  "frameworks": [
+    "Spring",
+    "Spring Boot"
+  ],
   "databases": [
     "MySQL",
     "PostgreSQL"
@@ -23,7 +29,8 @@
   ],
   "preferred_roles": [
     "Backend Developer",
-    "Software Engineer"
+    "Software Engineer",
+    "AI Prompt Engineer"
   ],
   "preferred_locations": [
     "Remote",
