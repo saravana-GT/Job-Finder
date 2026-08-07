@@ -18,89 +18,89 @@ const dbUrl = process.env.DATABASE_URL || 'postgresql://postgres.yrateqolerkxbya
 const { Pool } = pg;
 const pool = new Pool({ connectionString: dbUrl });
 
-async function populateEntryLevel() {
-  console.log('Connecting to Singapore database and populating entry-level/fresher developer jobs...');
+async function populateTrustedJobs() {
+  console.log('Connecting to Singapore database and populating highly trusted developer jobs...');
   try {
     // 1. Truncate table
     await pool.query('TRUNCATE TABLE jobs CASCADE');
     console.log('✓ Successfully cleared old jobs from database.');
 
-    // 2. Real entry-level/graduate developer jobs with verified URLs
-    const entryJobs = [
+    // 2. Official direct career boards for top-tier companies
+    const trustedJobs = [
       {
-        platform: 'Canonical',
-        company: 'Canonical',
-        role: 'Graduate Software Engineer (C / Java / Go)',
-        location: 'Remote',
+        platform: 'Google',
+        company: 'Google India',
+        role: 'Software Engineering Graduate / Fresher Roles',
+        location: 'Bangalore / Hyderabad',
         employment_type: 'Full Time',
         salary: 'Competitive',
-        experience: '0 years (Fresh Graduate)',
+        experience: '0-2 years (Entry Level)',
         skills: ['Java', 'C', 'DSA', 'Problem Solving', 'OOP'],
-        description: 'Join the engineering team at Canonical. Develop platform services, learn cloud technologies, and contribute to open source packages.',
-        apply_url: 'https://canonical.com/careers/3745239',
-        source_id: 'canonical-grad-se',
+        description: 'Official Google India careers page for Software Engineer openings. Freshers and university graduates can apply directly.',
+        apply_url: 'https://www.google.com/about/careers/applications/jobs/results/?q=Software%20Engineer&location=India',
+        source_id: 'google-india-se',
         ai_score: 95
       },
       {
-        platform: 'Canonical',
-        company: 'Canonical',
-        role: 'Software Engineer Intern (Java / Go)',
-        location: 'Remote',
-        employment_type: 'Internship',
+        platform: 'Amazon',
+        company: 'Amazon India',
+        role: 'Software Development Engineer (SDE I / Intern)',
+        location: 'Bangalore / Pune / Chennai',
+        employment_type: 'Full Time / Intern',
         salary: 'Competitive',
-        experience: '0 years (No experience)',
-        skills: ['Java', 'DSA', 'OOP', 'Problem Solving'],
-        description: 'Internship opportunity for computer science students or fresh graduates. Build backend microservices and debug system-level software.',
-        apply_url: 'https://canonical.com/careers/3891480',
-        source_id: 'canonical-se-intern',
+        experience: '0-1 years (Fresher)',
+        skills: ['Java', 'C', 'DSA', 'SQL', 'OOP'],
+        description: 'Official Amazon India careers page for Software Development Engineer (SDE-I) and Developer Internship positions.',
+        apply_url: 'https://www.amazon.jobs/en/search?base_query=Software+Development+Engineer&loc_query=India',
+        source_id: 'amazon-india-sde',
+        ai_score: 95
+      },
+      {
+        platform: 'Microsoft',
+        company: 'Microsoft India',
+        role: 'Software Engineer / Graduate Trainee',
+        location: 'Hyderabad / Bangalore',
+        employment_type: 'Full Time',
+        salary: 'Competitive',
+        experience: '0-2 years (Fresher)',
+        skills: ['Java', 'C', 'DSA', 'OOP', 'Problem Solving'],
+        description: 'Official Microsoft India careers page for Software Engineer and Graduate developer positions.',
+        apply_url: 'https://careers.microsoft.com/us/en/search-results?rt=professional&keywords=Software%20Engineer&location=India',
+        source_id: 'microsoft-india-se',
+        ai_score: 95
+      },
+      {
+        platform: 'TCS',
+        company: 'Tata Consultancy Services (TCS)',
+        role: 'TCS Ninja & Digital Programmer (Fresher)',
+        location: 'PAN India (Remote/Onsite)',
+        employment_type: 'Full Time',
+        salary: '3.6 - 7.0 LPA',
+        experience: '0 years (Fresh Graduate)',
+        skills: ['Java', 'C', 'SQL', 'DSA', 'OOP'],
+        description: 'Official TCS careers page for Ninja and Digital entry-level hiring programs. Open to all engineering and science graduates.',
+        apply_url: 'https://www.tcs.com/careers/india',
+        source_id: 'tcs-india-fresher',
         ai_score: 90
       },
       {
-        platform: 'Arbeitnow',
-        company: 'Snke',
-        role: 'Working Student - Data Pipeline Development',
-        location: 'Remote (Germany)',
-        employment_type: 'Part Time',
-        salary: 'Competitive',
-        experience: 'Entry Level / Student',
-        skills: ['Java', 'SQL', 'Problem Solving'],
-        description: 'Help develop and automate our backend data ingestion pipelines. Integrate relational databases and structure API payloads.',
-        apply_url: 'https://www.arbeitnow.com/jobs/companies/snke/working-student-data-pipeline-development-munchen-492971',
-        source_id: 'snke-data-pipeline-student',
-        ai_score: 85
-      },
-      {
-        platform: 'Arbeitnow',
-        company: 'Assetmetrix Gmbh',
-        role: 'Working Student (Werkstudent) – AI Engineering',
-        location: 'Remote (Munich)',
-        employment_type: 'Part Time',
-        salary: 'Competitive',
-        experience: 'Entry Level / Student',
-        skills: ['Prompt Engineering', 'Java', 'SQL'],
-        description: 'Assisting in developing AI pipelines, testing large language models, and configuring database backends.',
-        apply_url: 'https://www.arbeitnow.com/jobs/companies/assetmetrix-gmbh/werkstudent-ai-engineering-von-ort-munchen-38743',
-        source_id: 'assetmetrix-ai-student',
-        ai_score: 80
-      },
-      {
-        platform: 'WeWorkRemotely',
-        company: 'Inuka',
-        role: 'Junior Java Backend Developer (Microservices)',
-        location: 'Remote',
+        platform: 'Infosys',
+        company: 'Infosys Limited',
+        role: 'System Engineer / Specialist Programmer (Fresher)',
+        location: 'PAN India',
         employment_type: 'Full Time',
-        salary: 'Competitive',
-        experience: '0-1 years (Junior)',
-        skills: ['Java', 'Spring Boot', 'SQL', 'OOP', 'Problem Solving'],
-        description: 'Develop backend microservices and API integrations for Inuka platform using Java and Spring Boot.',
-        apply_url: 'https://weworkremotely.com/remote-jobs/inuka-junior-java-backend-developer',
-        source_id: 'wwr-inuka-java-backend-junior',
-        ai_score: 95
+        salary: '3.6 - 6.2 LPA',
+        experience: '0 years (Fresh Graduate)',
+        skills: ['Java', 'C', 'SQL', 'DSA', 'OOP'],
+        description: 'Official Infosys career portal for System Engineer and Specialist Programmer hiring campaigns.',
+        apply_url: 'https://career.infosys.com',
+        source_id: 'infosys-india-se',
+        ai_score: 90
       }
     ];
 
     // 3. Insert jobs
-    for (const job of entryJobs) {
+    for (const job of trustedJobs) {
       await pool.query(`
         INSERT INTO jobs (platform, company, role, location, employment_type, salary, experience, skills, description, apply_url, source_id, deadline, ai_score, status, created_at, updated_at)
         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, 'active', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
@@ -119,10 +119,10 @@ async function populateEntryLevel() {
         null,
         job.ai_score
       ]);
-      console.log(`✓ Ingested entry-level job: "${job.role}" at ${job.company}`);
+      console.log(`✓ Ingested highly trusted job: "${job.role}" at ${job.company}`);
     }
 
-    console.log('\nAll entry-level / fresher jobs populated successfully!');
+    console.log('\nAll highly trusted fresher jobs populated successfully!');
     await pool.end();
   } catch (err) {
     console.error('Failed to populate:', err.message);
@@ -130,4 +130,4 @@ async function populateEntryLevel() {
   }
 }
 
-populateEntryLevel();
+populateTrustedJobs();
